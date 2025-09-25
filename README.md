@@ -1,5 +1,5 @@
 # PythonEnvBuilder
-基于bat的python环境部署工具。
+基于bat的python环境快速部署工具。
 
 # 使用方法：
 下载[py部署.bat](https://github.com/E5C8F/PythonEnvBuilder/raw/refs/heads/main/py部署.bat)并执行。py将会部署到脚本工作目录。内置多个py、pip下载源，如果脚本执行速度太慢可以编辑更改下载源，或更换网络环境。默认使用python-3.13.7-embed-amd64.zip版本，可以自行编辑修改，但请注意此脚本只支持zip版本的python部署。
