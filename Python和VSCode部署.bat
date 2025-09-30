@@ -1,5 +1,12 @@
-@echo off & setlocal enabledelayedexpansion & chcp 65001 >nul 2>&1
-set "a=编码a" & for /f "usebackq delims=" %%a in (`echo !a^:^~2^,1!`) do (if not "%%~a"=="a" chcp 936 >nul 2>&1) & set "a="
+
+
+@echo off & setlocal enabledelayedexpansion & chcp 936 >nul 2>&1
+set "a=编码a" & for /f "usebackq delims=" %%a in (`echo !a^:^~2^,1!`) do (if not "%%~a"=="a" powershell -Command  "[IO.File]::WriteAllText('%~f0', [IO.File]::ReadAllText('%~f0', [Text.Encoding]::UTF8), [Text.Encoding]::GetEncoding(936))" & call %~f0 %* & exit /b) & set "a="
+net session >nul 2>&1 || (PowerShell -Command Start-Process '%~f0' -Verb RunAs && exit /b) || TIMEOUT /T 99999 /NOBREAK >nul 2>&1
+
+
+
+
 cd /d "%~dp0"
 
 
@@ -49,20 +56,50 @@ call :install_python "%python%" "%get-pip%" && (title Python环境就绪 - cmd && ec
 
 
 
+rem start "" /i "%cd%\vim\vim91\gvim.exe" || (
+
+rem ::注意要手动开启 【语法-自动】，然后开启【语法-在菜单中显示文件类型】，否则不起效。
+rem powershell -Command "[System.Net.WebClient]::new().DownloadFile('https://www.vim.org/downloads/gvim_9.1.0821_x64.zip', '%cd%\gvim_9.1.0821_x64.zip')"
+rem powershell -Command "Expand-Archive -Path "%cd%\gvim_9.1.0821_x64.zip" -DestinationPath "%cd%" -Force"
+
+
+rem powershell -Command "[System.Net.WebClient]::new().DownloadFile('https://github.com/skywind3000/vim-auto-popmenu/archive/refs/heads/master.zip', '%cd%\vim-auto-popmenu.zip')"
+rem powershell -Command "Expand-Archive -Path "%cd%\vim-auto-popmenu.zip" -DestinationPath "%cd%" -Force"
+rem robocopy /E /MOVE "%cd%\vim-auto-popmenu-master" "%cd%\vim\vimfiles" >nul
+
+rem powershell -Command "[System.Net.WebClient]::new().DownloadFile('https://github.com/skywind3000/vim-dict/archive/refs/heads/master.zip', '%cd%\vim-dict.zip')"
+rem powershell -Command "Expand-Archive -Path "%cd%\vim-dict.zip" -DestinationPath "%cd%" -Force"
+rem robocopy /E /MOVE "%cd%\vim-dict-master" "%cd%\vim\vimfiles" >nul
+rem (
+rem echo let g:apc_enable_ft = {'*':1}
+rem echo set cpt=.,k,w,b
+rem echo set completeopt=menu,menuone,noselect
+rem echo set shortmess+=c
+rem echo let g:apc_min_length = 1
+rem )>>"%cd%\vim\_vimrc"
+rem start "" /i "%cd%\vim\vim91\gvim.exe"
+rem )
+
+
+
+
 start "" /i "%cd%\VSCode-win32-x64\code.exe" || (
-powershell -Command "[System.Net.WebClient]::new().DownloadFile('https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-archive', '%cd%\VSCode-win32-x64.zip')"
-powershell -Command "Expand-Archive -Path "%cd%\VSCode-win32-x64.zip" -DestinationPath "%cd%\VSCode-win32-x64" -Force"
-md "%cd%\VSCode-win32-x64\data\tmp"
-start "" /i "%cd%\VSCode-win32-x64\code.exe"
+	echo ————————————————————
+	powershell -Command "[System.Net.WebClient]::new().DownloadFile('https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-archive', '%cd%\VSCode-win32-x64.zip')" && (
+		powershell -Command "Expand-Archive -Path "%cd%\VSCode-win32-x64.zip" -DestinationPath "%cd%\VSCode-win32-x64" -Force" && (
+			md "%cd%\VSCode-win32-x64\data\tmp"
+			start "" /i "%cd%\VSCode-win32-x64\code.exe"
+			echo         VSCode-win32-x64 部署完成。
+		) || echo         VSCode-win32-x64解压失败，请注意是否为官方正式版windows10、windows11系统？失败原因详见报错（如果有）。
+	) || echo         下载VSCode-win32-x64失败，请注意是否是网络问题？失败原因详见报错（如果有）。
+	echo ————————————————————
 )
 
 
 cmd /k
 
 
-
-
-
+goto :end
 
 
 :install_python
@@ -105,3 +142,4 @@ rem 	fc /C /N /W "%cd%\requirements.txt" "%cd%\requirements.tmp" >nul 2>&1 || (
 
 exit /b 0
 
+:end
