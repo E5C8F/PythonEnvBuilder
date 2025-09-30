@@ -85,6 +85,7 @@ rem )
 
 start "" /i "%cd%\VSCode-win32-x64\code.exe" || (
 	echo ————————————————————
+	echo     检测到VSCode-win32-x64未部署，正在进行部署……
 	powershell -Command "[System.Net.WebClient]::new().DownloadFile('https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-archive', '%cd%\VSCode-win32-x64.zip')" && (
 		powershell -Command "Expand-Archive -Path "%cd%\VSCode-win32-x64.zip" -DestinationPath "%cd%\VSCode-win32-x64" -Force" && (
 			md "%cd%\VSCode-win32-x64\data\tmp"
@@ -143,3 +144,6 @@ rem 	fc /C /N /W "%cd%\requirements.txt" "%cd%\requirements.tmp" >nul 2>&1 || (
 exit /b 0
 
 :end
+
+
+
